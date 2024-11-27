@@ -1,28 +1,32 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tseslint from "typescript-eslint";
+import pluginReact from "eslint-plugin-react";
+import parser from "@typescript-eslint/parser";
 
-export default tseslint.config(
-  { ignores: ['dist'] },
+/** @type {import('eslint').Linter.FlatConfig[]} */
+export default [
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
+    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     languageOptions: {
-      ecmaVersion: 2020,
+      parser,
       globals: globals.browser,
     },
     plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      js: pluginJs,
+      ts: tseslint,
+      react: pluginReact,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      ...pluginJs.configs.recommended.rules,
+      ...tseslint.configs.recommended.rules,
+      ...pluginReact.configs.flat.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
     },
   },
-)
+];
